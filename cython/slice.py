@@ -6,27 +6,27 @@
 from functools import partial
 from multiprocessing.pool import ThreadPool
 from pathlib import Path
+from typing import Tuple
 
 from pydub import AudioSegment
 from pydub.utils import make_chunks
 
+from env import SLICE_PATH, NUM_PROCESSES
 
-def save(chunk, out_dir):
-    index, chunk = chunk
-    chunk_name = out_dir / f"{index:02d}.wav"
+
+def save(chunks: Tuple[int, AudioSegment], out_dir: Path) -> None:
+    index, chunk = chunks
+    chunk_name: Path = out_dir / f"{index:02d}.wav"
     chunk.export(chunk_name, format="wav")
 
 
-def slice_wav(wave_path: Path, slice_step=30000):
+def slice_wav(wave_path: Path, slice_step: int = 30000) -> None:
     audio = AudioSegment.from_file(wave_path, "wav")
-    out_dir = Path(__file__).parent / wave_path.stem
+    out_dir = SLICE_PATH / wave_path.stem
     out_dir.mkdir(parents=True, exist_ok=True)
     chunks = make_chunks(audio, slice_step)
     chunks = list(zip(range(len(chunks)), chunks))
     save_p = partial(save, out_dir=out_dir)
 
-    # with multiprocessing.Pool() as pool:
-    #     pool.map(save_p, chunks)
-
-    with ThreadPool() as pool:
+    with ThreadPool(NUM_PROCESSES) as pool:
         pool.map(save_p, chunks)

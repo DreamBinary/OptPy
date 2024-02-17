@@ -12,7 +12,9 @@ import pydub
 #     ext_modules=cythonize(["test_cy_pyx.pyx"])
 # )
 setup(
-    ext_modules=cythonize(["slice_pyx.pyx"]),
+    name="slice_pyx",
+    # ext_modules=cythonize(["slice_pyx.pyx"]),
+    ext_modules=cythonize(["slice.py"]),
     # from pydub import AudioSegment
     # from pydub.utils import make_chunks
     install_requires=["pydub", "pathlib", "multiprocessing"],
