@@ -1,0 +1,4 @@
+cffi~=1.15.1
+numpy~=1.25.0
+Cython~=3.0.8
+pyinstrument~=4.6.2
